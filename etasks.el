@@ -10,6 +10,17 @@
   (and (file-readable-p source)
        (if dest (file-writable-p dest) t)))
 
+(defun object-to-string (obj) (prin1-to-string obj))
+
+(defun etask-log (x)
+  (get-buffer-create "*etask-output*")
+  (with-current-buffer "*etask-output*"
+    (end-of-buffer)
+    (insert (concat (object-to-string x) "\n"))))
+
+(defun etask-get-task (name)
+  (gethash name *etask-tasks*))
+
 ;;; exec a command with the shell
 (defun sh (command-string)
   "Executes a command string using the shell"
@@ -42,9 +53,8 @@
      (,action file)))
 
 ;;; main task code
-(defun task (name commands &optional deps)
-  "Creates a new task"
-;;  (interactive)
+(defun task (name commands &optional (deps nil))
+  "Creates a new task with a NAME which runs COMMANDS"
   (let ((task-object (make-hash-table :test 'equal)))
     ;construct task-object
     (puthash "task-name" name task-object)
@@ -55,12 +65,13 @@
 
 (defun etask-run-task (taskname)
   "Runs a task with the given name"
-  (interactive)
+  ;; grap the task name from the user
+  (interactive "MTask name to run: ")
+  (let
+      ;fetch the hash-table containing the task data
+      ((task (gethash taskname *etask-tasks*)))
+    ;log the beginning of a task run
+    (etask-log (concat "Beginning run of task :" (gethash "task-name" task) " at " (current-time-string)))
+    ; retrieve and run the function stored in "action"
+    (funcall (gethash "action" task))))
 
-  (let ((task (gethash taskname *etask-tasks* nil))
-	(no-task-found (lambda (name) (message (concat "Couldn't find a task called " name)))))
-    (if (task)
-	(progn
-	  (message (concat "Beginning run of task " (gethash 'name task nil) " at " (current-time-string)))
-	  ((gethash "action" task nil)))
-      (no-task-found taskname))))
