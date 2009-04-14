@@ -3,7 +3,7 @@
 
 
 ;;; Set things up
-(defvar *etask-tasks* (make-hash-table))
+(defvar *etask-tasks* (make-hash-table :test 'equal))
 
 ;;; internally-used-utility-functions
 (defun ok-to-mess-with-file-p (source &optional dest)
@@ -45,11 +45,11 @@
 (defun task (name commands &optional deps)
   "Creates a new task"
 ;;  (interactive)
-  (let ((task-object (make-hash-table)))
+  (let ((task-object (make-hash-table :test 'equal)))
     ;construct task-object
-    (puthash 'task-name name task-object)
-    (puthash 'action commands task-object)
-    (puthash 'deps deps task-object)
+    (puthash "task-name" name task-object)
+    (puthash "action" commands task-object)
+    (puthash "deps" deps task-object)
     ;put task-object into global task list
     (puthash name task-object *etask-tasks*)))
 
@@ -57,8 +57,10 @@
   "Runs a task with the given name"
   (interactive)
 
-  (let ((task (gethash taskname *etask-tasks* nil)))
+  (let ((task (gethash taskname *etask-tasks* nil))
+	(no-task-found (lambda (name) (message (concat "Couldn't find a task called " name)))))
     (if (task)
 	(progn
 	  (message (concat "Beginning run of task " (gethash 'name task nil) " at " (current-time-string)))
-	  ((gethash 'action task nil))))))
+	  ((gethash "action" task nil)))
+      (no-task-found taskname))))
