@@ -1,20 +1,22 @@
+;;;;Copyright (C) 2009 by Jonathan E. Magen
 ;;;; ETasks System for Rake-like task management for Emacs
-;;;; Jonathan E. Magen
+
 
 ;;; Set things up
 (defvar *etask-tasks* (make-hash-table))
 
 ;;; internally-used-utility-functions
-(defun ok-to-mess-with-file-p (source &optional dest)
+(defun ok-to-mess-with-file-p (source &optional (dest dest-supplied-p))
   (and (file-exists-p source) 
        (file-readable-p source)
-       (file-writable-p dest)))
+       (if (dest-supplied-p) 
+	   (file-writable-p dest)
+	 T)))
 
 ;;; exec a command with the shell
 (defun sh (command-string)
-  "Executes a command string"
-  (shell-command-to-string (shell-quote-argument command-string)))
-
+  "Executes a command string using the shell"
+  (message (shell-command-to-string command-string)))
 
 ;;; file manipulation helpers
 (defun cp (source dest)
@@ -37,12 +39,11 @@
   "Returns a list with all files matched by the expression pattern"
   (file-expand-wildcards pattern))
 
-(defun filelist-each (pattern action)
+(defmacro filelist-each (pattern action)
   "Perform an action on each file matched by pattern"
-  (let ((files (filelist pattern)))
-    (dolist (file files)
-      (action file))))
-    
+  `(dolist (file (filelist ,pattern))
+     (,action file)))
+
 ;;; main task code
 (defun task (name commands &optional deps)
   "Creates a new task"
