@@ -6,12 +6,9 @@
 (defvar *etask-tasks* (make-hash-table))
 
 ;;; internally-used-utility-functions
-(defun ok-to-mess-with-file-p (source &optional (dest dest-supplied-p))
-  (and (file-exists-p source) 
-       (file-readable-p source)
-       (if (dest-supplied-p) 
-	   (file-writable-p dest)
-	 T)))
+(defun ok-to-mess-with-file-p (source &optional dest)
+  (and (file-readable-p source)
+       (if dest (file-writable-p dest) t)))
 
 ;;; exec a command with the shell
 (defun sh (command-string)
@@ -31,7 +28,7 @@
 
 (defun rm (filename)
   "Removes (deletes) a file called filename"
-  (if (ok-to-mess-with-file-p source dest)
+  (if (ok-to-mess-with-file-p filename)
       (delete-file filename)))
 
 ;;; filelists and filelist iteration
