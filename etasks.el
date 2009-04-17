@@ -1,7 +1,5 @@
 ;;; etasks.el --- Rake-like task managment for Emacs
 ;; Copyright (C) 2009 by Jonathan E. Magen
-;; Author: Jonathan E. Magen <yonkeltron [AT-NOSPAM] gmail [DOT-NOSPAM] com>
-;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -18,6 +16,18 @@
 ;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ;; 02110-1301 USA
 
+;; Version: 0.1 Author: Jonathan E. Magen <yonkeltron [AT-NOSPAM]
+;; gmail [DOT-NOSPAM] com> Maintainer: Jonathan E. Magen <yonkeltron
+;; [AT-NOSPAM] gmail [DOT-NOSPAM] com> Commentary: The goal here is to
+;; produce a nice little task-management and automation package to
+;; work the way that Ruby's Rake tool works. 
+
+;; This is not intended to be a complete replacement, though I do
+;; forsee some nice possibilities. In the meantime, it does provide a
+;; few helper methods and features such as file manipulation helpers,
+;; filelist building, filelist iteration and even some nice
+;; logging. On the other hand, namespaces and dependencies are not yet
+;; implemented. Patches, advice and suggestions are welcome.
 
 ;;; Code:
 
@@ -43,23 +53,23 @@
 ;; exec a command with the shell
 (defun sh (command-string)
   "Executes a command string using the shell"
-  (message (shell-command-to-string command-string)))
+  (etask-log (concat "sh: " command-string ": " (shell-command-to-string command-string))))
 
 ;; file manipulation helpers
 (defun cp (source dest)
   "Copies a file from source to dest"
   (if (ok-to-mess-with-file-p source dest)
-      (copy-file source dest)))
+      (etask-log (concat "cp " source " -> " dest ": " (copy-file source dest)))))
 
 (defun mv (source dest)
   "Moves (renames) a file from source to dest"
   (if (ok-to-mess-with-file-p source dest)
-      (rename-file source dest)))
+      (etask-log (concat "mv  " source " -> " dest ": " (rename-file source dest)))))
 
 (defun rm (filename)
   "Removes (deletes) a file called filename"
   (if (ok-to-mess-with-file-p filename)
-      (delete-file filename)))
+      (etask-log (concat "rm " filename ": " (delete-file filename)))))
 
 ;; filelists and filelist iteration
 (defun filelist (pattern)
@@ -90,7 +100,7 @@
       ;fetch the hash-table containing the task data
       ((task (gethash taskname *etask-tasks*)))
     ;log the beginning of a task run
-    (etask-log (concat "Beginning run of task :" (gethash "task-name" task) " at " (current-time-string)))
+    (etask-log (concat "\nBeginning run of task :" (gethash "task-name" task) " at " (current-time-string)))
     ; retrieve and run the function stored in "action"
     (funcall (gethash "action" task))))
 
