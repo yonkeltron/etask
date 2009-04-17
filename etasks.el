@@ -53,23 +53,29 @@
 ;; exec a command with the shell
 (defun sh (command-string)
   "Executes a command string using the shell"
-  (etask-log (concat "sh: " command-string ": " (shell-command-to-string command-string))))
+  (if (stringp command-string)
+      (etask-log (concat "sh: " command-string ": " (shell-command-to-string command-string)))
+    (error (concat "Commands passed to sh must be a string! Instead it was " 
+		   (object-to-string command-string)))))
 
 ;; file manipulation helpers
 (defun cp (source dest)
   "Copies a file from source to dest"
   (if (ok-to-mess-with-file-p source dest)
-      (etask-log (concat "cp " source " -> " dest ": " (copy-file source dest)))))
+      (etask-log (concat "cp " source " -> " dest ": " (copy-file source dest)))
+    (error (concat "Unable to copy " source " -> " dest "!"))))
 
 (defun mv (source dest)
   "Moves (renames) a file from source to dest"
   (if (ok-to-mess-with-file-p source dest)
-      (etask-log (concat "mv  " source " -> " dest ": " (rename-file source dest)))))
+      (etask-log (concat "mv  " source " -> " dest ": " (rename-file source dest)))
+    (error (concat "Unable to move " source " -> " dest "!"))))
 
 (defun rm (filename)
   "Removes (deletes) a file called filename"
   (if (ok-to-mess-with-file-p filename)
-      (etask-log (concat "rm " filename ": " (delete-file filename)))))
+      (etask-log (concat "rm " filename ": " (delete-file filename)))
+    (error (concat "Unable to delete " filename "!"))))
 
 ;; filelists and filelist iteration
 (defun filelist (pattern)
@@ -100,7 +106,10 @@
       ;fetch the hash-table containing the task data
       ((task (gethash taskname *etask-tasks*)))
     ;log the beginning of a task run
-    (etask-log (concat "\nBeginning run of task :" (gethash "task-name" task) " at " (current-time-string)))
+    (etask-log (concat "\nBeginning run of task :" 
+		       (gethash "task-name" task) 
+		       " at " 
+		       (current-time-string)))
     ; retrieve and run the function stored in "action"
     (funcall (gethash "action" task))))
 
