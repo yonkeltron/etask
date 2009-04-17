@@ -44,7 +44,7 @@
 
 ;;; filelists and filelist iteration
 (defun filelist (pattern)
-  "Returns a list with all files matched by the expression pattern"
+ "Returns a list with all files matched by the expression pattern"
   (file-expand-wildcards pattern))
 
 (defmacro filelist-each (pattern action)
