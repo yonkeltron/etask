@@ -1,11 +1,30 @@
-;;;;Copyright (C) 2009 by Jonathan E. Magen
-;;;; ETasks System for Rake-like task management for Emacs
+;;; etasks.el --- Rake-like task managment for Emacs
+;; Copyright (C) 2009 by Jonathan E. Magen
+;; Author: Jonathan E. Magen <yonkeltron [AT-NOSPAM] gmail [DOT-NOSPAM] com>
+;; Version: 0.1
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2 of the
+;; License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, write to the Free Software
+;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+;; 02110-1301 USA
 
 
-;;; Set things up
+;;; Code:
+
+;; Set things up
 (defvar *etask-tasks* (make-hash-table :test 'equal))
 
-;;; internally-used-utility-functions
+;; internally-used-utility-functions
 (defun ok-to-mess-with-file-p (source &optional dest)
   (and (file-readable-p source)
        (if dest (file-writable-p dest) t)))
@@ -15,18 +34,18 @@
 (defun etask-log (x)
   (get-buffer-create "*etask-output*")
   (with-current-buffer "*etask-output*"
-    (end-of-buffer)
+;    (end-of-buffer)
     (insert (concat (object-to-string x) "\n"))))
 
 (defun etask-get-task (name)
   (gethash name *etask-tasks*))
 
-;;; exec a command with the shell
+;; exec a command with the shell
 (defun sh (command-string)
   "Executes a command string using the shell"
   (message (shell-command-to-string command-string)))
 
-;;; file manipulation helpers
+;; file manipulation helpers
 (defun cp (source dest)
   "Copies a file from source to dest"
   (if (ok-to-mess-with-file-p source dest)
@@ -42,7 +61,7 @@
   (if (ok-to-mess-with-file-p filename)
       (delete-file filename)))
 
-;;; filelists and filelist iteration
+;; filelists and filelist iteration
 (defun filelist (pattern)
  "Returns a list with all files matched by the expression pattern"
   (file-expand-wildcards pattern))
@@ -52,8 +71,8 @@
   `(dolist (file (filelist ,pattern))
      (,action file)))
 
-;;; main task code
-(defun task (name commands &optional (deps nil))
+;; main task code
+(defun task (name commands &optional deps)
   "Creates a new task with a NAME which runs COMMANDS"
   (let ((task-object (make-hash-table :test 'equal)))
     ;construct task-object
@@ -65,7 +84,7 @@
 
 (defun etask-run-task (taskname)
   "Runs a task with the given name"
-  ;; grap the task name from the user
+  ; grap the task name from the user
   (interactive "MTask name to run: ")
   (let
       ;fetch the hash-table containing the task data
@@ -75,3 +94,4 @@
     ; retrieve and run the function stored in "action"
     (funcall (gethash "action" task))))
 
+;;; etasks.el ends here
