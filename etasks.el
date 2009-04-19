@@ -3,6 +3,7 @@
 ;; Version: 0.1
 ;; Author: Jonathan E. Magen <yonkeltron[AT-NOSPAM]gmail[DOT-NOSPAM]com>
 ;; Maintainer: Jonathan E. Magen <yonkeltron [AT-NOSPAM] gmail [DOT-NOSPAM] com>
+;; Keywords: files, process, tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commentary: The goal here is to
 ;; produce a nice little task-management and automation package to
