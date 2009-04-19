@@ -1,12 +1,12 @@
 ;;; etasks.el --- Rake-like task managment for Emacs
 ;; Copyright (C) 2009 by Jonathan E. Magen
-;; Version: 0.1 
-;; Author: Jonathan E. Magen <yonkeltron [AT-NOSPAM]gmail [DOT-NOSPAM] com> 
+;; Version: 0.1
+;; Author: Jonathan E. Magen <yonkeltron[AT-NOSPAM]gmail[DOT-NOSPAM]com>
 ;; Maintainer: Jonathan E. Magen <yonkeltron [AT-NOSPAM] gmail [DOT-NOSPAM] com>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Commentary: The goal here is to
 ;; produce a nice little task-management and automation package to
-;; work the way that Ruby's Rake tool works. 
+;; work the way that Ruby's Rake tool works.
 ;;
 ;; This is not intended to be a complete replacement, though I do
 ;; forsee some nice possibilities. In the meantime, it does provide a
@@ -39,26 +39,35 @@
 
 ;; internally-used-utility-functions
 (defun etask-ok-to-mess-with-file-p (source &optional dest)
+  "Checks if a file manipulation operation is permitted"
   (and (file-readable-p source)
        (if dest (file-writable-p dest) t)))
 
-(defun object-to-string (obj) (prin1-to-string obj))
+(defun object-to-string (obj)
+  "Converts any object into a printable representation"
+  (prin1-to-string obj))
 
-(defun etask-log (x)
+(defun etask-log (message)
+  "Logs a MESSAGE to the *etask-output* buffer"
   (get-buffer-create "*etask-output*")
   (with-current-buffer "*etask-output*"
-;    (end-of-buffer)
-    (insert (concat (object-to-string x) "\n"))))
+    (insert (concat (object-to-string message) "\n"))))
 
 (defun etask-get-task (name)
+  "Returns the task object of a given NAME from the global task list"
   (gethash name *etask-tasks*))
+
+(defun etask-exec (task-object)
+  "Internally used function to execute an individual task's action"
+  (etask-log (concat "Executing: " (gethash "task-name" task-object)))
+  (funcall (gethash "action" task-object)))
 
 ;; exec a command with the shell
 (defun sh (command-string)
   "Executes a command string using the shell"
   (if (stringp command-string)
       (etask-log (concat "sh: " command-string ": " (shell-command-to-string command-string)))
-    (error (concat "Commands passed to sh must be a string! Instead it was " 
+    (error (concat "Commands passed to sh must be a string! Instead it was "
 		   (object-to-string command-string)))))
 
 ;; file manipulation helpers
@@ -71,7 +80,7 @@
 (defun mv (source dest)
   "Moves (renames) a file from source to dest"
   (if (etask-ok-to-mess-with-file-p source dest)
-      (etask-log (concat "mv  " source " -> " dest ": " (rename-file source dest)))
+      (etask-log (concat "mv " source " -> " dest ": " (rename-file source dest)))
     (error (concat "Unable to move " source " -> " dest "!"))))
 
 (defun rm (filename)
@@ -109,12 +118,16 @@
       ;fetch the hash-table containing the task data
       ((task (gethash taskname *etask-tasks*)))
     ;log the beginning of a task run
-    (etask-log (concat "\nBeginning run of task " 
-		       (gethash "task-name" task) 
-		       " at " 
+    (etask-log (concat "\nBeginning run of task "
+		       (gethash "task-name" task)
+		       " at "
 		       (current-time-string)))
+    ; execute task dependencies
+    (dolist (task-dep-name (gethash "deps" task nil))
+      (etask-exec (etask-get-task task-dep-name)))
     ; retrieve and run the function stored in "action"
-    (funcall (gethash "action" task))))
+    (etask-exec task)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; etasks.el ends here
+
