@@ -7,7 +7,7 @@
 ;; Commentary: The goal here is to
 ;; produce a nice little task-management and automation package to
 ;; work the way that Ruby's Rake tool works. 
-
+;;
 ;; This is not intended to be a complete replacement, though I do
 ;; forsee some nice possibilities. In the meantime, it does provide a
 ;; few helper methods and features such as file manipulation helpers,
@@ -19,12 +19,12 @@
 ;; modify it under the terms of the GNU General Public License as
 ;; published by the Free Software Foundation; either version 2 of the
 ;; License, or (at your option) any later version.
-
+;;
 ;; This program is distributed in the hope that it will be useful, but
 ;; WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ;; General Public License for more details.
-
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -38,7 +38,7 @@
 (defvar *etask-tasks* (make-hash-table :test 'equal))
 
 ;; internally-used-utility-functions
-(defun ok-to-mess-with-file-p (source &optional dest)
+(defun etask-ok-to-mess-with-file-p (source &optional dest)
   (and (file-readable-p source)
        (if dest (file-writable-p dest) t)))
 
@@ -64,30 +64,30 @@
 ;; file manipulation helpers
 (defun cp (source dest)
   "Copies a file from source to dest"
-  (if (ok-to-mess-with-file-p source dest)
+  (if (etask-ok-to-mess-with-file-p source dest)
       (etask-log (concat "cp " source " -> " dest ": " (copy-file source dest)))
     (error (concat "Unable to copy " source " -> " dest "!"))))
 
 (defun mv (source dest)
   "Moves (renames) a file from source to dest"
-  (if (ok-to-mess-with-file-p source dest)
+  (if (etask-ok-to-mess-with-file-p source dest)
       (etask-log (concat "mv  " source " -> " dest ": " (rename-file source dest)))
     (error (concat "Unable to move " source " -> " dest "!"))))
 
 (defun rm (filename)
   "Removes (deletes) a file called filename"
-  (if (ok-to-mess-with-file-p filename)
+  (if (etask-ok-to-mess-with-file-p filename)
       (etask-log (concat "rm " filename ": " (delete-file filename)))
     (error (concat "Unable to delete " filename "!"))))
 
 ;; filelists and filelist iteration
-(defun filelist (pattern)
+(defun etask-filelist (pattern)
  "Returns a list with all files matched by the expression pattern"
   (file-expand-wildcards pattern))
 
-(defmacro filelist-each (pattern action)
+(defmacro etask-filelist-each (pattern action)
   "Perform an action on each file matched by pattern"
-  `(dolist (file (filelist ,pattern))
+  `(dolist (file (etask-filelist ,pattern))
      (,action file)))
 
 ;; main task code
@@ -109,7 +109,7 @@
       ;fetch the hash-table containing the task data
       ((task (gethash taskname *etask-tasks*)))
     ;log the beginning of a task run
-    (etask-log (concat "\nBeginning run of task :" 
+    (etask-log (concat "\nBeginning run of task " 
 		       (gethash "task-name" task) 
 		       " at " 
 		       (current-time-string)))
