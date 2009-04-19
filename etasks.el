@@ -1,6 +1,20 @@
 ;;; etasks.el --- Rake-like task managment for Emacs
 ;; Copyright (C) 2009 by Jonathan E. Magen
+;; Version: 0.1 
+;; Author: Jonathan E. Magen <yonkeltron [AT-NOSPAM]gmail [DOT-NOSPAM] com> 
+;; Maintainer: Jonathan E. Magen <yonkeltron [AT-NOSPAM] gmail [DOT-NOSPAM] com>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Commentary: The goal here is to
+;; produce a nice little task-management and automation package to
+;; work the way that Ruby's Rake tool works. 
 
+;; This is not intended to be a complete replacement, though I do
+;; forsee some nice possibilities. In the meantime, it does provide a
+;; few helper methods and features such as file manipulation helpers,
+;; filelist building, filelist iteration and even some nice
+;; logging. On the other hand, namespaces and dependencies are not yet
+;; implemented. Patches, advice and suggestions are welcome.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
 ;; published by the Free Software Foundation; either version 2 of the
@@ -15,21 +29,10 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ;; 02110-1301 USA
-
-;; Version: 0.1 Author: Jonathan E. Magen <yonkeltron [AT-NOSPAM]
-;; gmail [DOT-NOSPAM] com> Maintainer: Jonathan E. Magen <yonkeltron
-;; [AT-NOSPAM] gmail [DOT-NOSPAM] com> Commentary: The goal here is to
-;; produce a nice little task-management and automation package to
-;; work the way that Ruby's Rake tool works. 
-
-;; This is not intended to be a complete replacement, though I do
-;; forsee some nice possibilities. In the meantime, it does provide a
-;; few helper methods and features such as file manipulation helpers,
-;; filelist building, filelist iteration and even some nice
-;; logging. On the other hand, namespaces and dependencies are not yet
-;; implemented. Patches, advice and suggestions are welcome.
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Code:
+
+(provide 'etasks)
 
 ;; Set things up
 (defvar *etask-tasks* (make-hash-table :test 'equal))
@@ -113,4 +116,5 @@
     ; retrieve and run the function stored in "action"
     (funcall (gethash "action" task))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; etasks.el ends here
