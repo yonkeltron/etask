@@ -64,7 +64,7 @@
   (funcall (gethash "action" task-object)))
 
 ;; exec a command with the shell
-(defun sh (command-string)
+(defun etask-sh (command-string)
   "Executes a command string using the shell"
   (if (stringp command-string)
       (etask-log (concat "sh: " command-string ": " (shell-command-to-string command-string)))
@@ -72,19 +72,19 @@
 		   (object-to-string command-string)))))
 
 ;; file manipulation helpers
-(defun cp (source dest)
+(defun etask-cp (source dest)
   "Copies a file from source to dest"
   (if (etask-ok-to-mess-with-file-p source dest)
       (etask-log (concat "cp " source " -> " dest ": " (copy-file source dest)))
     (error (concat "Unable to copy " source " -> " dest "!"))))
 
-(defun mv (source dest)
+(defun etask-mv (source dest)
   "Moves (renames) a file from source to dest"
   (if (etask-ok-to-mess-with-file-p source dest)
       (etask-log (concat "mv " source " -> " dest ": " (rename-file source dest)))
     (error (concat "Unable to move " source " -> " dest "!"))))
 
-(defun rm (filename)
+(defun etask-rm (filename)
   "Removes (deletes) a file called filename"
   (if (etask-ok-to-mess-with-file-p filename)
       (etask-log (concat "rm " filename ": " (delete-file filename)))
