@@ -101,7 +101,7 @@
      (,action file)))
 
 ;; main task code
-(defun task (name commands &optional deps)
+(defun etask-task (name commands &optional deps)
   "Creates a new task with a NAME which runs COMMANDS"
   (let ((task-object (make-hash-table :test 'equal)))
     ;construct task-object
