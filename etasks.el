@@ -1,4 +1,4 @@
-;;; etasks.el --- Rake-like task managment for Emacs
+;;; etask.el --- Rake-like task managment for Emacs
 ;; Copyright (C) 2009 by Jonathan E. Magen
 ;; Version: 0.1
 ;; Author: Jonathan E. Magen <yonkeltron[AT-NOSPAM]gmail[DOT-NOSPAM]com>
@@ -33,7 +33,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Code:
 
-(provide 'etasks)
+(provide 'etask)
 
 ;; Set things up
 (defvar *etask-tasks* (make-hash-table :test 'equal))
@@ -132,5 +132,5 @@
     (etask-exec task)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; etasks.el ends here
+;;; etask.el ends here
 
