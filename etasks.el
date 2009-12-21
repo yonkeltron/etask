@@ -46,13 +46,15 @@
 
 (defun object-to-string (obj)
   "Converts any object into a printable representation"
-  (prin1-to-string obj))
+  (prin1-to-string obj t))
 
 (defun etask-log (message)
   "Logs a MESSAGE to the *etask-output* buffer"
   (get-buffer-create "*etask-output*")
   (with-current-buffer "*etask-output*"
-    (insert (concat (object-to-string message) "\n"))))
+    (setq buffer-read-only nil)
+    (insert (concat (object-to-string message) "\n"))
+    (setq buffer-read-only t)))
 
 (defun etask-get-task (name)
   "Returns the task object of a given NAME from the global task list"
